@@ -27,7 +27,6 @@ const InputSection: React.FC<InputSectionProps> = ({
   const [step, setStep] = useState(1);
   const [currentFounder, setCurrentFounder] = useState(0);
   const [numFounders, setNumFounders] = useState(1);
-  const founderValid = isFounderInfoValid(form.founders[currentFounder]);
   const contactValid = isContactInfoValid(form.contact);
 
   const founderStart = 3;
@@ -52,7 +51,8 @@ const InputSection: React.FC<InputSectionProps> = ({
     return (
       <StepNumFounders
         value={numFounders}
-        onNext={() => {
+        onNext={(finalNum) => {
+          setNumFounders(finalNum)
           setForm(f => ({ ...f, founders: Array(numFounders).fill({ name: "", title: "", bio: "", linkedIn: "" }) }));
           setCurrentFounder(0);
           setStep(3);
@@ -69,17 +69,20 @@ const InputSection: React.FC<InputSectionProps> = ({
     return (
       <StepFounderInfo
         value={founder}
-        onChange={val => {
-          const updated = [...form.founders];
-          updated[founderIdx] = val;
-          setForm(f => ({ ...f, founders: updated }));
-        }}
-        onNext={() => {
+        index={founderIdx}
+        total={numFounders}
+        onNext={(updatedFounder) => {
+          // Save only once when Next is clicked
+          const updatedFounders = [...form.founders];
+          updatedFounders[founderIdx] = updatedFounder;
+          setForm((f) => ({ ...f, founders: updatedFounders }));
+  
+          // Move to next founder or contact step
           if (founderIdx < numFounders - 1) {
             setCurrentFounder(founderIdx + 1);
             setStep(step + 1);
           } else {
-            setStep(2 + numFounders + 1);
+            setStep(contactStep);
           }
         }}
         onBack={() => {
@@ -90,9 +93,6 @@ const InputSection: React.FC<InputSectionProps> = ({
             setStep(step - 1);
           }
         }}
-        index={founderIdx}
-        total={numFounders}
-        disabled={!founderValid}
       />
     );
   }
