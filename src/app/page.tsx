@@ -30,9 +30,6 @@ export default function Home() {
     contactTemplate: null,
   });
   const [section, setSection] = useState(1); // 1: Input, 2: Template, 3: Styles
-  const [step, setStep] = useState(1);
-  const [numFounders, setNumFounders] = useState(1);
-  const [currentFounder, setCurrentFounder] = useState(0);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,16 +63,6 @@ export default function Home() {
       setLoading(false);
     }
   };
-
-  // Section 1: Input Info Steps
-  const inputSteps = [
-    'company',
-    'numFounders',
-    ...Array(numFounders).fill('founder'),
-    'contact',
-    'about',
-  ];
-  const inputStepCount = inputSteps.length;
 
   // Section 2: Template Selection
   const [templateStep, setTemplateStep] = useState(1);
@@ -121,21 +108,13 @@ export default function Home() {
         </div>
         {section === 1 && (
           <InputSection
-            step={step}
-            setStep={setStep}
-            numFounders={numFounders}
-            setNumFounders={setNumFounders}
-            currentFounder={currentFounder}
-            setCurrentFounder={setCurrentFounder}
             form={form}
             setForm={setForm}
-            aboutTemplates={aboutTemplates}
-            dummyData={dummyData}
             loading={loading}
             success={success}
             error={error}
             handleSubmit={handleSubmit}
-            onSectionComplete={() => setSection(2)}
+            onSectionComplete={() => setSection(2)} // move to templates after submission
           />
         )}
         {section === 2 && (

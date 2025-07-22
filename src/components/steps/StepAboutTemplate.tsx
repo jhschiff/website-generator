@@ -14,10 +14,9 @@ type Props = {
   onBack: () => void;
   templates: TemplateOption[];
   disabled: boolean;
-  dummyData: any;
 };
 
-export default function StepAboutTemplate({ value, onChange, onNext, onBack, templates, disabled, dummyData }: Props) {
+export default function StepAboutTemplate({ value, onChange, onNext, onBack, templates, disabled }: Props) {
   const previewButtonClass = (selected: boolean) =>
     `relative border rounded-xl overflow-hidden shadow transition-all bg-gray-50 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 ring-blue-400 ${selected ? "ring-4 ring-blue-500 border-blue-400" : "border-gray-200"}`;
   const previewContainerClass = "w-96 h-60 flex flex-col items-center justify-center bg-white overflow-hidden aspect-[16/10]";
@@ -35,7 +34,7 @@ export default function StepAboutTemplate({ value, onChange, onNext, onBack, tem
             aria-label={`Select ${name} about us template`}
           >
             <div className={previewContainerClass}>
-              <Component {...dummyData} />
+              <Component />
               <span className="absolute bottom-2 left-2 bg-white/80 text-xs font-semibold px-2 py-1 rounded shadow">{name}</span>
             </div>
           </button>

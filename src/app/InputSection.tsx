@@ -1,22 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import StepCompanyInfo from "../components/steps/StepCompanyInfo";
 import StepNumFounders from "../components/steps/StepNumFounders";
 import StepFounderInfo from "../components/steps/StepFounderInfo";
 import StepContactInfo from "../components/steps/StepContactInfo";
-import StepAboutTemplate from "../components/steps/StepAboutTemplate";
 import { isCompanyInfoValid, isFounderInfoValid, isContactInfoValid } from "../utils/validation";
 
 interface InputSectionProps {
-  step: number;
-  setStep: (n: number) => void;
-  numFounders: number;
-  setNumFounders: (n: number) => void;
-  currentFounder: number;
-  setCurrentFounder: (n: number) => void;
   form: any;
   setForm: (fn: (f: any) => any) => void;
-  aboutTemplates: any[];
-  dummyData: any;
   loading: boolean;
   success: boolean;
   error: string | null;
@@ -25,30 +16,25 @@ interface InputSectionProps {
 }
 
 const InputSection: React.FC<InputSectionProps> = ({
-  step,
-  setStep,
-  numFounders,
-  setNumFounders,
-  currentFounder,
-  setCurrentFounder,
   form,
   setForm,
-  aboutTemplates,
-  dummyData,
   loading,
   success,
   error,
   handleSubmit,
   onSectionComplete,
 }) => {
+  const [step, setStep] = useState(1);
+  const [currentFounder, setCurrentFounder] = useState(0);
+  const [numFounders, setNumFounders] = useState(1);
   // Validation logic must be here, after props destructuring
   const companyValid = isCompanyInfoValid(form.company);
   const founderValid = isFounderInfoValid(form.founders[currentFounder]);
   const contactValid = isContactInfoValid(form.contact);
 
-  let idx = step - 1;
-  let founderIdx = idx - 2;
-  if (idx === 0) {
+  console.log("Step: ", step)
+
+  if (step === 1) {
     return (
       <StepCompanyInfo
         value={form.company}
@@ -58,7 +44,7 @@ const InputSection: React.FC<InputSectionProps> = ({
       />
     );
   }
-  if (idx === 1) {
+  if (step === 2) {
     return (
       <StepNumFounders
         value={numFounders}
@@ -72,8 +58,12 @@ const InputSection: React.FC<InputSectionProps> = ({
       />
     );
   }
-  if (idx >= 2 && idx < 2 + numFounders) {
-    founderIdx = idx - 2;
+
+  // Founder Step
+  const founderStart = 3;
+  const founderEnd =  founderStart + numFounders - 1;
+  if (step >= founderStart && step <= founderEnd) {
+    const founderIdx = step - founderStart;
     const founder = form.founders[founderIdx] || { name: "", title: "", bio: "", linkedIn: "" };
     return (
       <StepFounderInfo
@@ -105,43 +95,20 @@ const InputSection: React.FC<InputSectionProps> = ({
       />
     );
   }
-  if (idx === 2 + numFounders) {
+
+  // Conatact info step
+  if (step === founderEnd + 1) {
     return (
       <StepContactInfo
         value={form.contact}
         onChange={contact => setForm(f => ({ ...f, contact }))}
-        onNext={() => setStep(2 + numFounders + 2)}
-        onBack={() => setStep(2 + numFounders)}
-        disabled={!contactValid}
+        onNext={async () => {
+          handleSubmit(); // submit form only
+          if (!error) onSectionComplete(); // go to templates
+        }}
+        onBack={() => setStep(founderEnd)}
+        disabled={!contactValid || loading}
       />
-    );
-  }
-  if (idx === 2 + numFounders + 1) {
-    React.useEffect(() => {
-      if (!success && !loading) {
-        handleSubmit();
-      }
-    }, []);
-    React.useEffect(() => {
-      if (success) {
-        onSectionComplete();
-      }
-    }, [success]);
-    return (
-      <>
-        <StepAboutTemplate
-          value={form.aboutTemplate}
-          onChange={val => setForm(f => ({ ...f, aboutTemplate: val }))}
-          onNext={() => {}}
-          onBack={() => setStep(2 + numFounders + 1)}
-          templates={aboutTemplates}
-          disabled={!form.aboutTemplate || loading}
-          dummyData={dummyData}
-        />
-        {loading && <div className="text-blue-600 text-center mt-4">Submitting...</div>}
-        {error && <div className="text-red-600 text-center mt-4">{error}</div>}
-        {success && <div className="text-green-600 text-center mt-4">Submission successful!</div>}
-      </>
     );
   }
   return null;
