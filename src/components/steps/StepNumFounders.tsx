@@ -1,19 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 
 type Props = {
   value: number;
-  onChange: (val: number) => void;
-  onNext: () => void;
+  onNext: (val: number) => void;
   onBack: () => void;
 };
 
-export default function StepNumFounders({ value, onChange, onNext, onBack }: Props) {
+export default function StepNumFounders({ value, onNext, onBack }: Props) {
+  const [localNum, setLocalNum] = useState<number>(value);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onNext(localNum);
+  };
   return (
-    <form className="max-w-xl mx-auto flex flex-col gap-6" onSubmit={e => { e.preventDefault(); onNext(); }}>
+    <form className="max-w-xl mx-auto flex flex-col gap-6" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-bold mb-2">How many founders?</h2>
       <div>
         <label className="block text-sm font-medium mb-1">Number of Founders</label>
-        <select className="w-full border rounded px-3 py-2" value={value} onChange={e => onChange(Number((e.target as HTMLSelectElement).value))}>
+        <select
+          className="w-full border rounded px-3 py-2"
+          value={localNum}
+          onChange={(e) =>
+            setLocalNum(Number((e.target as HTMLSelectElement).value))
+          }
+        >
           {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
