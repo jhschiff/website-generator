@@ -1,33 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ContactInfo } from "../../types/form";
+import { isContactInfoValid } from "@/utils/validation";
 
 type Props = {
   value: ContactInfo;
-  onChange: (val: ContactInfo) => void;
   onNext: () => void;
   onBack: () => void;
-  disabled: boolean;
+  loading?: boolean;
 };
 
-export default function StepContactInfo({ value, onChange, onNext, onBack, disabled }: Props) {
+export default function StepContactInfo({ value, onNext, onBack, loading }: Props) {
+  const [contact, setContact] = useState<ContactInfo>(value);
+  const [isValid, setIsValid] = useState(false);
+
+  useEffect(() => {
+    setIsValid(isContactInfoValid(contact));
+  }, [contact]);
+  
   const handleSocialLinkChange = (idx: number, link: string) => {
     const newLinks = [...value.socialLinks];
     newLinks[idx] = link;
-    onChange({ ...value, socialLinks: newLinks });
+    setContact({...contact, socialLinks: newLinks});
   };
-  const addSocialLink = () => onChange({ ...value, socialLinks: [...value.socialLinks, ""] });
-  const removeSocialLink = (idx: number) => onChange({ ...value, socialLinks: value.socialLinks.filter((_, i) => i !== idx) });
+  
+  const addSocialLink = () =>setContact({ ...contact, socialLinks: [...contact.socialLinks, ""] });
+  
+  const removeSocialLink = (idx: number) => {
+    setContact({
+      ...contact,
+      socialLinks: contact.socialLinks.filter((_, i) => i !== idx),
+    });
+  };
 
   return (
-    <form className="max-w-xl mx-auto flex flex-col gap-6" onSubmit={e => { e.preventDefault(); onNext(); }}>
+    <form className="max-w-xl mx-auto flex flex-col gap-6"
+      onSubmit={e => {
+        e.preventDefault();
+        if (isValid) onNext(contact); }}>
       <h2 className="text-2xl font-bold mb-2">Enter Contact Info</h2>
       <div>
         <label className="block text-sm font-medium mb-1">Phone</label>
-        <input type="text" className="w-full border rounded px-3 py-2" value={value.phone} onChange={e => onChange({ ...value, phone: e.target.value })} required />
+        <input
+          type="text"
+          className="w-full border rounded px-3 py-2"
+          value={contact.phone}
+          onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+          required
+        />
       </div>
       <div>
         <label className="block text-sm font-medium mb-1">Address</label>
-        <input type="text" className="w-full border rounded px-3 py-2" value={value.address} onChange={e => onChange({ ...value, address: e.target.value })} required />
+        <input
+          type="text"
+          className="w-full border rounded px-3 py-2"
+          value={contact.address}
+          onChange={(e) => setContact({ ...contact, address: e.target.value })}
+          required
+        />
       </div>
       <div>
         <label className="block text-sm font-medium mb-1">Social Links</label>
@@ -45,7 +74,7 @@ export default function StepContactInfo({ value, onChange, onNext, onBack, disab
       </div>
       <div className="flex justify-between mt-4">
         <button type="button" className="bg-gray-200 text-gray-700 px-6 py-2 rounded" onClick={onBack}>Back</button>
-        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded disabled:opacity-50" disabled={disabled}>Next</button>
+        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded disabled:opacity-50" disabled={!isValid || loading}>Next</button>
       </div>
     </form>
   );

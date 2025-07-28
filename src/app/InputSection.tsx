@@ -3,7 +3,6 @@ import StepCompanyInfo from "../components/steps/StepCompanyInfo";
 import StepNumFounders from "../components/steps/StepNumFounders";
 import StepFounderInfo from "../components/steps/StepFounderInfo";
 import StepContactInfo from "../components/steps/StepContactInfo";
-import { isFounderInfoValid, isContactInfoValid } from "../utils/validation";
 
 interface InputSectionProps {
   form: any;
@@ -27,7 +26,6 @@ const InputSection: React.FC<InputSectionProps> = ({
   const [step, setStep] = useState(1);
   const [currentFounder, setCurrentFounder] = useState(0);
   const [numFounders, setNumFounders] = useState(1);
-  const contactValid = isContactInfoValid(form.contact);
 
   const founderStart = 3;
   const founderEnd =  founderStart + numFounders - 1;
@@ -102,10 +100,9 @@ const InputSection: React.FC<InputSectionProps> = ({
     return (
       <StepContactInfo
         value={form.contact}
-        onChange={contact => setForm(f => ({ ...f, contact }))}
         onNext={() => setStep(submitStep)}
         onBack={() => setStep(founderEnd)}
-        disabled={!contactValid || loading}
+        loading={loading}
       />
     );
   }
@@ -179,7 +176,7 @@ const InputSection: React.FC<InputSectionProps> = ({
             disabled={loading}
             onClick={async () => {
               await handleSubmit();
-              if (!error) onSectionComplete(); // move to templates if success
+              if (!error) onSectionComplete();
             }}
           >
             {loading ? "Submitting..." : "Submit"}
