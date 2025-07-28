@@ -1,15 +1,11 @@
 import React from "react";
+
+import {
+  HomepageTemplates,
+  ContactTemplates,
+  AboutTemplates,
+} from "../constants/templates";
 import StepContactTemplate from "../components/steps/StepContactTemplate";
-import HomepageTemplate1 from "../components/templates/Homepage/HomepageTemplate1";
-import HomepageTemplate2 from "../components/templates/Homepage/HomepageTemplate2";
-import HomepageTemplate3 from "../components/templates/Homepage/HomepageTemplate3";
-import ContactUsTemplate1 from "../components/templates/ContactUs/ContactUsTemplate1";
-import ContactUsTemplate2 from "../components/templates/ContactUs/ContactUsTemplate2";
-import ContactUsTemplate3 from "../components/templates/ContactUs/ContactUsTemplate3";
-import AboutUsTemplate1 from "../components/templates/AboutUs/AboutUsTemplate1";
-import AboutUsTemplate2 from "../components/templates/AboutUs/AboutUsTemplate2";
-import AboutUsTemplate3 from "../components/templates/AboutUs/AboutUsTemplate3";
-import { HomepageTemplateKey, ContactUsTemplateKey, AboutUsTemplateKey } from "../types/form";
 import StepAboutTemplate from "@/components/steps/StepAboutTemplate";
 
 interface TemplateSectionProps {
@@ -33,22 +29,6 @@ const TemplateSection: React.FC<TemplateSectionProps> = ({
   setForm,
   setSection,
 }) => {
-  const homepageTemplates = [
-    { key: "homepage1" as HomepageTemplateKey, name: "Homepage Style 1", Component: HomepageTemplate1 },
-    { key: "homepage2" as HomepageTemplateKey, name: "Homepage Style 2", Component: HomepageTemplate2 },
-    { key: "homepage3" as HomepageTemplateKey, name: "Homepage Style 3", Component: HomepageTemplate3 },
-  ];
-  const contactTemplates = [
-    { key: "contact1" as ContactUsTemplateKey, name: "Contact Style 1", Component: ContactUsTemplate1 },
-    { key: "contact2" as ContactUsTemplateKey, name: "Contact Style 2", Component: ContactUsTemplate2 },
-    { key: "contact3" as ContactUsTemplateKey, name: "Contact Style 3", Component: ContactUsTemplate3 },
-  ];
-  const aboutTemplates = [
-    { key: "about1" as AboutUsTemplateKey, name: "About Us Style 1", Component: AboutUsTemplate1 },
-    { key: "about2" as AboutUsTemplateKey, name: "About Us Style 2", Component: AboutUsTemplate2 },
-    { key: "about3" as AboutUsTemplateKey, name: "About Us Style 3", Component: AboutUsTemplate3 },
-  ];
-
   const dummyData = {
     businessName: form.company.businessName || "Business Name",
     tagline: form.company.tagline || "We build the future.",
@@ -62,16 +42,17 @@ const TemplateSection: React.FC<TemplateSectionProps> = ({
       : ["https://twitter.com", "https://facebook.com"],
   };
 
-  if (templateStep === 1) {
-    return (
-      <div>
-        <h2 className="text-2xl font-bold mb-6">Choose a Homepage Template</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {homepageTemplates.map(({ key, name, Component }) => (
+  switch (templateStep) {
+    case 1:
+      return (
+        <div>
+          <h2 className="text-2xl font-bold mb-6">Choose a Homepage Template</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {HomepageTemplates.map(({ key, name, Component }) => (
             <button
               key={key}
               className={previewButtonClass(form.homepageTemplate === key)}
-              onClick={() => setForm(f => ({ ...f, homepageTemplate: key as HomepageTemplateKey }))}
+              onClick={() => setForm(f => ({ ...f, homepageTemplate: key }))}
               aria-label={`Select ${name} homepage template`}
             >
               <div className={previewContainerClass}>
@@ -92,33 +73,32 @@ const TemplateSection: React.FC<TemplateSectionProps> = ({
         </div>
       </div>
     );
+    case 2:
+      return (
+        <StepContactTemplate
+          value={form.contactTemplate}
+          onChange={val => setForm(f => ({ ...f, contactTemplate: val }))}
+          onNext={() => setTemplateStep(3)}
+          onBack={() => setTemplateStep(1)}
+          templates={ContactTemplates}
+          disabled={!form.contactTemplate}
+          dummyData={dummyData}
+        />
+      );
+    case 3:
+      return (
+        <StepAboutTemplate
+          value={form.aboutTemplate}
+          onChange={val => setForm(f => ({ ...f, aboutTemplate: val }))}
+          onNext={() => setSection(3)}
+          onBack={() => setTemplateStep(2)}
+          templates={AboutTemplates}
+          disabled={!form.aboutTemplate}
+        />
+      );
+    default:
+      return null
   }
-  if (templateStep === 2) {
-    return (
-      <StepContactTemplate
-        value={form.contactTemplate}
-        onChange={val => setForm(f => ({ ...f, contactTemplate: val }))}
-        onNext={() => setTemplateStep(3)}
-        onBack={() => setTemplateStep(1)}
-        templates={contactTemplates}
-        disabled={!form.contactTemplate}
-        dummyData={dummyData}
-      />
-    );
-  }
-    if (templateStep === 3) {
-    return (
-      <StepAboutTemplate
-        value={form.aboutTemplate}
-        onChange={val => setForm(f => ({ ...f, aboutTemplate: val }))}
-        onNext={() => setSection(3)}
-        onBack={() => setTemplateStep(2)}
-        templates={aboutTemplates}
-        disabled={!form.aboutTemplate}
-      />
-    );
-  }
-  return null;
 };
 
 export default TemplateSection; 
