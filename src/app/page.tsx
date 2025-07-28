@@ -1,21 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  HomepageTemplateKey,
-  AboutUsTemplateKey,
-  ContactUsTemplateKey,
-  FormState,
-} from "../types/form";
-import HomepageTemplate1 from "../components/templates/Homepage/HomepageTemplate1";
-import HomepageTemplate2 from "../components/templates/Homepage/HomepageTemplate2";
-import HomepageTemplate3 from "../components/templates/Homepage/HomepageTemplate3";
-import AboutUsTemplate1 from "../components/templates/AboutUs/AboutUsTemplate1";
-import AboutUsTemplate2 from "../components/templates/AboutUs/AboutUsTemplate2";
-import AboutUsTemplate3 from "../components/templates/AboutUs/AboutUsTemplate3";
-import ContactUsTemplate1 from "../components/templates/ContactUs/ContactUsTemplate1";
-import ContactUsTemplate2 from "../components/templates/ContactUs/ContactUsTemplate2";
-import ContactUsTemplate3 from "../components/templates/ContactUs/ContactUsTemplate3";
+import { FormState } from "../types/form";
 import InputSection from "./InputSection";
 import TemplateSection from "./TemplateSection";
 
@@ -33,18 +19,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Dummy data for previews
-  const dummyData = {
-    businessName: form.company.businessName || "Business Name",
-    tagline: form.company.tagline || "We build the future.",
-    logoUrl: undefined,
-    aboutText: form.company.aboutText || "Company Name is a leader in innovative solutions.",
-    mission: "Empowering businesses worldwide.",
-    email: form.company.email || "info@company.com",
-    phone: form.contact.phone || "123-456-7890",
-    socialLinks: form.contact.socialLinks.filter(Boolean).length ? form.contact.socialLinks : ["https://twitter.com", "https://facebook.com"],
-  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -81,23 +55,6 @@ export default function Home() {
     </div>
   );
 
-  // Template configs
-  const homepageTemplates = [
-    { key: "homepage1" as HomepageTemplateKey, name: "Homepage Style 1", Component: HomepageTemplate1 },
-    { key: "homepage2" as HomepageTemplateKey, name: "Homepage Style 2", Component: HomepageTemplate2 },
-    { key: "homepage3" as HomepageTemplateKey, name: "Homepage Style 3", Component: HomepageTemplate3 },
-  ];
-  const aboutTemplates = [
-    { key: "about1" as AboutUsTemplateKey, name: "About Style 1", Component: AboutUsTemplate1 },
-    { key: "about2" as AboutUsTemplateKey, name: "About Style 2", Component: AboutUsTemplate2 },
-    { key: "about3" as AboutUsTemplateKey, name: "About Style 3", Component: AboutUsTemplate3 },
-  ];
-  const contactTemplates = [
-    { key: "contact1" as ContactUsTemplateKey, name: "Contact Style 1", Component: ContactUsTemplate1 },
-    { key: "contact2" as ContactUsTemplateKey, name: "Contact Style 2", Component: ContactUsTemplate2 },
-    { key: "contact3" as ContactUsTemplateKey, name: "Contact Style 3", Component: ContactUsTemplate3 },
-  ];
-
   // Main render
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-8">
@@ -123,9 +80,6 @@ export default function Home() {
             setTemplateStep={setTemplateStep}
             form={form}
             setForm={setForm}
-            homepageTemplates={homepageTemplates}
-            contactTemplates={contactTemplates}
-            dummyData={dummyData}
             setSection={setSection}
           />
         )}

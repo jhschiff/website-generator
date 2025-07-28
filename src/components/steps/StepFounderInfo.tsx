@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { FounderInfo } from "../../types/form";
 import { isFounderInfoValid } from "../../utils/validation";
 
@@ -12,6 +12,11 @@ type Props = {
 
 export default function StepFounderInfo({ value, onNext, onBack, index, total }: Props) {
   const [localFounder, setLocalFounder] = useState<FounderInfo>(value);
+
+  // Sync prop changes to local state
+  useEffect(() => {
+    setLocalFounder(value);
+  }, [value]);
   
   const valid = useMemo(
     () => isFounderInfoValid(localFounder),

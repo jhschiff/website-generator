@@ -4,7 +4,7 @@ import { isContactInfoValid } from "@/utils/validation";
 
 type Props = {
   value: ContactInfo;
-  onNext: () => void;
+  onNext: (updatedContact: ContactInfo) => void;
   onBack: () => void;
   loading?: boolean;
 };

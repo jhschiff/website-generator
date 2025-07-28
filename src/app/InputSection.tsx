@@ -32,14 +32,15 @@ const InputSection: React.FC<InputSectionProps> = ({
   const contactStep = founderEnd + 1;
   const submitStep = contactStep + 1;
 
-  console.log("f", form)
-
   // Comapny Info
   if (step === 1) {
     return (
       <StepCompanyInfo
         value={form.company}
-        onNext={() => setStep(2)}
+        onNext={(updatedCompany) => {
+          setForm(f => ({ ...f, company: updatedCompany }));
+          setStep(2);
+        }}
       />
     );
   }
@@ -100,7 +101,10 @@ const InputSection: React.FC<InputSectionProps> = ({
     return (
       <StepContactInfo
         value={form.contact}
-        onNext={() => setStep(submitStep)}
+        onNext={(updatedContact) => {
+          setForm((f) => ({ ...f, contact: updatedContact }));
+          setStep(submitStep);
+        }}
         onBack={() => setStep(founderEnd)}
         loading={loading}
       />
@@ -176,7 +180,7 @@ const InputSection: React.FC<InputSectionProps> = ({
             disabled={loading}
             onClick={async () => {
               await handleSubmit();
-              if (!error) onSectionComplete();
+              if (!error) onSectionComplete(); // move to templates if success
             }}
           >
             {loading ? "Submitting..." : "Submit"}

@@ -14,7 +14,7 @@ export default function StepCompanyInfo({ value, onNext }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (valid) {
-      onNext(localCompany); // ✅ Save to parent *once* when moving forward
+      onNext(localCompany);
     }
   };
 
